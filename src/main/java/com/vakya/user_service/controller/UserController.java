@@ -23,7 +23,7 @@ public class UserController {
         return userService.verify(user);
     }
 
-    @GetMapping("/{email}")
+    @GetMapping("/users/{email}")
     public User getUserByEmail(@PathVariable String email) {
         return userService.getUserByEmail(email);
     }

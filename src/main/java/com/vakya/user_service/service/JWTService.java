@@ -27,18 +27,37 @@ public class JWTService {
         SecretKey sk = keyGenerator.generateKey();
         secretKey = Base64.getEncoder().encodeToString(sk.getEncoded());
     }
-    public String generateToken(String userName) {
+    public String generateToken(String userName, String email) {
         Map<String,Object> claims = new HashMap<>();
+        claims.put("email", email);
+        claims.put("name", userName);
         return Jwts.builder()
                 .claims()
                 .add(claims)
                 .subject(userName)
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis()*68*68*38))
+                .expiration(new Date(System.currentTimeMillis() + (1000 * 60 * 60 * 10))) // 10 hours
                 .and()
                 .signWith(getKey())
                 .compact();
     }
+
+//    public String generateToken(String userName, String email) {
+//        Map<String, Object> claims = new HashMap<>();
+//        claims.put("email", email);
+//        claims.put("name", userName);
+//
+//        return Jwts.builder()
+//                .claims()
+//                .add(claims)
+//                .subject(userName)
+//                .issuedAt(new Date(System.currentTimeMillis()))
+//                .expiration(new Date(System.currentTimeMillis() + (1000 * 60 * 60 * 10))) // 10 hours
+//                .and()
+//                .signWith(getKey())
+//                .compact();
+ //   }
+
 
     private SecretKey getKey() {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);

@@ -5,6 +5,7 @@ import com.vakya.user_service.service.MyUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequestWrapper;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -24,27 +25,74 @@ public class JwtFilter extends OncePerRequestFilter {
 
     @Autowired
     ApplicationContext applicationContext;
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getServletPath();
+        return path.startsWith("/oauth2/")
+                || path.startsWith("/login/oauth2/")
+                || path.equals("/login-page")
+                || path.equals("/success");
+    }
 
+
+
+    //    @Override
+//    protected void doFilterInternal(HttpServletRequest request,
+//                                    HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+//        String authHeader = request.getHeader("Authorization");
+//        String token= null;
+//        String username = null;
+//
+//        if(authHeader!=null && authHeader.startsWith("Bearer ")){
+//            token = authHeader.substring(7);
+//            username = jwtService.extractUserName(token);
+//        }
+//
+//        if(username!=null && SecurityContextHolder.getContext().getAuthentication()==null){
+//            UserDetails userDetails = applicationContext.getBean(MyUserDetailsService.class).loadUserByUsername(username);
+//            if(jwtService.validateToken(token,userDetails)){
+//                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails,
+//                        null,userDetails.getAuthorities());
+//                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+//            }
+//        }
+//        filterChain.doFilter(request,response);
+//    }
     @Override
     protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+                                    HttpServletResponse response,
+                                    FilterChain filterChain) throws ServletException, IOException {
+
+
+
         String authHeader = request.getHeader("Authorization");
-        String token= null;
+        String token = null;
         String username = null;
 
-        if(authHeader!=null && authHeader.startsWith("Bearer ")){
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
             token = authHeader.substring(7);
             username = jwtService.extractUserName(token);
         }
 
-        if(username!=null && SecurityContextHolder.getContext().getAuthentication()==null){
-            UserDetails userDetails = applicationContext.getBean(MyUserDetailsService.class).loadUserByUsername(username);
-            if(jwtService.validateToken(token,userDetails)){
-                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails,
-                        null,userDetails.getAuthorities());
+        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            UserDetails userDetails = applicationContext.getBean(MyUserDetailsService.class)
+                    .loadUserByUsername(username);
+
+            if (jwtService.validateToken(token, userDetails)) {
+                UsernamePasswordAuthenticationToken authToken =
+                        new UsernamePasswordAuthenticationToken(
+                                userDetails, null, userDetails.getAuthorities()
+                        );
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+                SecurityContextHolder.getContext().setAuthentication(authToken);
+
+                request.setAttribute("X-User-Name", username);
             }
         }
-        filterChain.doFilter(request,response);
+
+        filterChain.doFilter(request, response);
     }
+
+
 }

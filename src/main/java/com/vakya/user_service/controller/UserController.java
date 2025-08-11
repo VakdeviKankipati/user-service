@@ -12,6 +12,7 @@ public class UserController {
         this.userService = userService;
     }
 
+
     @PostMapping("/register/user")
     public User registerUser(@RequestBody User user){
         return userService.registerUser(user);
@@ -20,6 +21,11 @@ public class UserController {
     @PostMapping("/login")
     public String login(@RequestBody User user){
         return userService.verify(user);
+    }
+
+    @GetMapping("/{email}")
+    public User getUserByEmail(@PathVariable String email) {
+        return userService.getUserByEmail(email);
     }
 
 }

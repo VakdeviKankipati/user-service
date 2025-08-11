@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Login</title>
+  <meta charset="UTF-8">
+  <style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #f4f4f4;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+    .login-container {
+        background: white;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        width: 300px;
+        text-align: center;
+    }
+    input {
+        width: 90%;
+        padding: 10px;
+        margin: 8px 0;
+    }
+    button {
+        padding: 10px;
+        width: 95%;
+        background: #007bff;
+        color: white;
+        border: none;
+        cursor: pointer;
+    }
+    .google-btn {
+        margin-top: 10px;
+        background: #db4437;
+    }
+  </style>
+</head>
+<body>
+
+<div class="login-container">
+  <h2>Login</h2>
+
+  <!-- Email/Password Form -->
+  <form method="post" th:action="@{/login}">
+    <input type="email" name="username" placeholder="Email" required>
+    <input type="password" name="password" placeholder="Password" required>
+    <button type="submit">Login</button>
+  </form>
+
+  <!-- Google Login -->
+  <form method="get" th:action="@{/oauth2/authorization/google}">
+    <button type="submit" class="google-btn">Login with Google</button>
+  </form>
+</div>
+
+</body>
+</html>

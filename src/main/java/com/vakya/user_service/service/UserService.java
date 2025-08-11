@@ -37,9 +37,16 @@ public class UserService {
         Authentication authentication = authenticationManager.
                 authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(),user.getPassword()));
         if(authentication.isAuthenticated()){
-            return jwtService.generateToken(user.getName());
+            return jwtService.generateToken(user.getName(),user.getEmail());
         }
         return "fail";
     }
 
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+    public void registerGoogleUserIfNotExists(String email) {
+         userRepository.findByEmail(email);
+    }
 }

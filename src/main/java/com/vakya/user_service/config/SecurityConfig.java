@@ -42,38 +42,56 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
+
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http,
+                                           OAuth2UserService<OAuth2UserRequest, OAuth2User> oAuth2UserService) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/register/user", "/login", "/", "/posts/**", "/users/**").permitAll()
                         .anyRequest().authenticated()
                 )
-                .formLogin(form -> form
-                        .loginPage("/login-page")
-                        .loginProcessingUrl("/login")
-                        .defaultSuccessUrl("/success", true)
-                        .permitAll()
-                )
+//                .formLogin(form -> form
+//                        .loginPage("/login-page")
+//                        .loginProcessingUrl("/login")
+//                        .defaultSuccessUrl("/success", true)
+//                        .permitAll()
+//                )
                 .oauth2Login(oauth2 -> oauth2
                         .loginPage("/login-page")
-                        .defaultSuccessUrl("/success", true)
+                        .userInfoEndpoint(userInfo -> userInfo
+                                .userService(oAuth2UserService)  // injected bean here
+                        )
+                        .successHandler((request, response, authentication) -> {
+                            response.sendRedirect("/success");
+                        })
                 )
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/get/posts")
                         .permitAll()
                 )
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-
-        ;
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
     @Bean
-    public AuthenticationProvider authenticationProvider(){
+    public OAuth2UserService<OAuth2UserRequest, OAuth2User> oAuth2UserService(UserService userService) {
+        return userRequest -> {
+            OAuth2User oAuth2User = new DefaultOAuth2UserService().loadUser(userRequest);
+            String email = oAuth2User.getAttribute("email");
+
+            // Save user to DB if not exists
+            userService.registerGoogleUserIfNotExists(email);
+
+            return oAuth2User;
+        };
+    }
+
+    @Bean
+    public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setUserDetailsService(userDetailsService);
         provider.setPasswordEncoder(new BCryptPasswordEncoder(12));

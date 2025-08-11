@@ -42,21 +42,6 @@ public class JWTService {
                 .compact();
     }
 
-//    public String generateToken(String userName, String email) {
-//        Map<String, Object> claims = new HashMap<>();
-//        claims.put("email", email);
-//        claims.put("name", userName);
-//
-//        return Jwts.builder()
-//                .claims()
-//                .add(claims)
-//                .subject(userName)
-//                .issuedAt(new Date(System.currentTimeMillis()))
-//                .expiration(new Date(System.currentTimeMillis() + (1000 * 60 * 60 * 10))) // 10 hours
-//                .and()
-//                .signWith(getKey())
-//                .compact();
- //   }
 
 
     private SecretKey getKey() {

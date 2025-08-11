@@ -47,6 +47,13 @@ public class UserService {
     }
 
     public void registerGoogleUserIfNotExists(String email) {
-         userRepository.findByEmail(email);
+        if (userRepository.findByEmail(email) == null) {
+            User user = new User();
+            user.setEmail(email);
+            user.setRole("ROLE_GOOGLE_USER");
+            // You may want to generate a random password or leave empty
+            user.setPassword(passwordEncoder.encode("random_password"));
+            userRepository.save(user);
+        }
     }
 }

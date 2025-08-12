@@ -51,9 +51,12 @@ public class UserService {
             User user = new User();
             user.setEmail(email);
             user.setRole("ROLE_GOOGLE_USER");
-            // You may want to generate a random password or leave empty
             user.setPassword(passwordEncoder.encode("random_password"));
             userRepository.save(user);
         }
+    }
+
+    public User getUserByName(String name) {
+        return userRepository.findByName(name);
     }
 }

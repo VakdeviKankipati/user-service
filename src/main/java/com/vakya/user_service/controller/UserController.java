@@ -23,9 +23,14 @@ public class UserController {
         return userService.verify(user);
     }
 
-    @GetMapping("/users/{email}")
+    @GetMapping("/users/email/{email}")
     public User getUserByEmail(@PathVariable String email) {
         return userService.getUserByEmail(email);
+    }
+
+    @GetMapping("/users/name/{name}")
+    public User getUserByName(@PathVariable String name) {
+        return userService.getUserByName(name);
     }
 
 }

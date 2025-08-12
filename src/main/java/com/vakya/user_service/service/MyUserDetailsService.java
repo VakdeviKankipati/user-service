@@ -16,11 +16,13 @@ public class MyUserDetailsService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user =  userRepository.findByEmail(email);
-
-        if(user==null){
-            throw new UsernameNotFoundException(email);
+    public UserDetails loadUserByUsername(String usernameOrEmail) throws UsernameNotFoundException {
+        User user = userRepository.findByEmail(usernameOrEmail);
+        if (user == null) {
+            user = userRepository.findByName(usernameOrEmail);
+        }
+        if (user == null) {
+            throw new UsernameNotFoundException(usernameOrEmail);
         }
 
         return org.springframework.security.core.userdetails.User.builder()
@@ -29,4 +31,5 @@ public class MyUserDetailsService implements UserDetailsService {
                 .roles(user.getRole())
                 .build();
     }
+
 }

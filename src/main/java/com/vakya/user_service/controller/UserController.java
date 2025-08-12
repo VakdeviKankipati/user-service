@@ -2,6 +2,8 @@ package com.vakya.user_service.controller;
 
 import com.vakya.user_service.model.User;
 import com.vakya.user_service.service.UserService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -37,5 +39,18 @@ public class UserController {
     public void addPostIdToUser(@PathVariable Integer id, @PathVariable Long postId) {
         userService.addPostIdToUser(id, postId);
     }
+
+    @GetMapping("/users/validate-token")
+    public ResponseEntity<String> validateToken(@RequestHeader("Authorization") String authHeader) {
+        try {
+            String username = userService.validateToken(authHeader);
+            return ResponseEntity.ok(username);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+        }
+    }
+
 
 }

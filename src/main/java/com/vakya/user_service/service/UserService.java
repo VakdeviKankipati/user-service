@@ -75,4 +75,19 @@ public class UserService {
         user.setPostId(postIds);
         userRepository.save(user);
     }
+
+    public String validateToken(String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new IllegalArgumentException("Missing or invalid Authorization header");
+        }
+
+        String token = authHeader.substring(7); // Remove "Bearer "
+
+        // Directly use JWTService to validate
+        if (jwtService.validateTokenOfHeader(token)) {
+            return jwtService.extractUserName(token);
+        } else {
+            throw new RuntimeException("Invalid token");
+        }
+    }
 }

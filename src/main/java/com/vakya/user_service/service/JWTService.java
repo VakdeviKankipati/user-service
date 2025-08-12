@@ -73,4 +73,13 @@ public class JWTService {
     private Date extraExpiration(String token){
         return extratClaim(token, Claims::getExpiration);
     }
+
+    public boolean validateTokenOfHeader(String token) {
+        try {
+            extractAllClaims(token);
+            return !isTokenExpired(token);
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }

@@ -33,4 +33,9 @@ public class UserController {
         return userService.getUserByName(name);
     }
 
+    @PostMapping("/users/{id}/posts/{postId}")
+    public void addPostIdToUser(@PathVariable Integer id, @PathVariable Long postId) {
+        userService.addPostIdToUser(id, postId);
+    }
+
 }

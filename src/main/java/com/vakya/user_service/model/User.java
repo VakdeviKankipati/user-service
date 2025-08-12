@@ -27,6 +27,6 @@ public class User {
     private String role;
 
     @ElementCollection
-    private List<Integer> postId;
+    private List<Long> postId;
 }
 

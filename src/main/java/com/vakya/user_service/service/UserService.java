@@ -9,6 +9,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 public class UserService {
 
@@ -58,5 +61,18 @@ public class UserService {
 
     public User getUserByName(String name) {
         return userRepository.findByName(name);
+    }
+
+    public void addPostIdToUser(Integer userId, Long postId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        List<Long> postIds = user.getPostId();
+        if (postIds == null) {
+            postIds = new ArrayList<>();
+        }
+        if (!postIds.contains(postId)) {
+            postIds.add(postId);
+        }
+        user.setPostId(postIds);
+        userRepository.save(user);
     }
 }

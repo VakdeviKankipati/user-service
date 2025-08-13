@@ -14,7 +14,6 @@ public class UserController {
         this.userService = userService;
     }
 
-
     @PostMapping("/register/user")
     public User registerUser(@RequestBody User user){
         return userService.registerUser(user);
@@ -51,6 +50,4 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }
     }
-
-
 }

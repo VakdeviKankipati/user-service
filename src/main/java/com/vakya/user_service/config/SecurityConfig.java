@@ -55,12 +55,12 @@ public class SecurityConfig {
                         .requestMatchers("/register/user", "/login", "/", "/posts/**", "/users/**", "/auth/validate-token").permitAll()
                         .anyRequest().authenticated()
                 )
-//                .formLogin(form -> form
-//                        .loginPage("/login-page")
-//                        .loginProcessingUrl("/login")
-//                        .defaultSuccessUrl("/success", true)
-//                        .permitAll()
-//                )
+                .formLogin(form -> form
+                        .loginPage("/login-page")
+                        .loginProcessingUrl("/login")
+                        .defaultSuccessUrl("/success", true)
+                        .permitAll()
+                )
                 .oauth2Login(oauth2 -> oauth2
                         .loginPage("/login-page")
                         .userInfoEndpoint(userInfo -> userInfo
@@ -90,8 +90,6 @@ public class SecurityConfig {
         return userRequest -> {
             OAuth2User oAuth2User = new DefaultOAuth2UserService().loadUser(userRequest);
             String email = oAuth2User.getAttribute("email");
-
-            // Save user to DB if not exists
             userService.registerGoogleUserIfNotExists(email);
 
             return oAuth2User;

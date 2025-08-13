@@ -4,12 +4,14 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
-import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.Date;
@@ -21,11 +23,17 @@ import java.util.function.Function;
 public class JWTService {
 
     private String secretKey;
+    private static final Logger logger = LoggerFactory.getLogger(JWTService.class);
 
-    public JWTService() throws NoSuchAlgorithmException {
-        KeyGenerator keyGenerator = KeyGenerator.getInstance("HmacSHA256");
-        SecretKey sk = keyGenerator.generateKey();
-        secretKey = Base64.getEncoder().encodeToString(sk.getEncoded());
+//    public JWTService() throws NoSuchAlgorithmException {
+//        KeyGenerator keyGenerator = KeyGenerator.getInstance("HmacSHA256");
+//        SecretKey sk = keyGenerator.generateKey();
+//        secretKey = Base64.getEncoder().encodeToString(sk.getEncoded());
+//        logger.info("Generated Secret Key (Base64): {}", secretKey);
+//    }
+
+    public JWTService(@Value("${jwt.secret}") String secretKey) {
+        this.secretKey = secretKey;
     }
 
     public String generateToken(String userName, String email) {

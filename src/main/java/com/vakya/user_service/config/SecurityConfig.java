@@ -55,19 +55,6 @@ public class SecurityConfig {
                         .requestMatchers("/register/user", "/login", "/", "/posts/**", "/users/**", "/auth/validate-token").permitAll()
                         .anyRequest().authenticated()
                 )
-                .formLogin(form -> form
-                        .loginPage("/login-page")
-                        .loginProcessingUrl("/login")
-                        .defaultSuccessUrl("/success", true)
-                        .permitAll()
-                )
-                .oauth2Login(oauth2 -> oauth2
-                        .loginPage("/login-page")
-                        .userInfoEndpoint(userInfo -> userInfo
-                                .userService(oAuth2UserService)
-                        )
-                        .successHandler((request, response, authentication) -> response.sendRedirect("/success"))
-                )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
